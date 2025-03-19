@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protected Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #43cea2, #185a9d);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+    .protected-container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 40px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background-color: #ff4b5c;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="protected-container">
+    <h1>Welcome to the Protected Page!</h1>
+    <p id="user-email">Loading user info...</p>
+    <button onclick="logout()">Log Out</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabase = supabase.createClient(
+      'https://YOUR-PROJECT-URL.supabase.co',
+      'YOUR-ANON-PUBLIC-KEY'
+    );
+
+    async function checkAuth() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = '/auth.html';
+      } else {
+        document.getElementById('user-email').innerText = `You are logged in as: ${session.user.email}`;
+      }
+    }
+
+    checkAuth();
+
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = '/auth.html';
+    }
+  </script>
+</body>
+</html>
