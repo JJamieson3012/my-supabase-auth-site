@@ -74,13 +74,13 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const supabase = supabase.createClient(
+    const client = supabase.createClient(
       'https://dvsprlalovkbvssnhevk.supabase.co', 
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2c3BybGFsb3ZrYnZzc25oZXZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0MTM5NjEsImV4cCI6MjA1Nzk4OTk2MX0.7RSr1Vix-iufjIF2d_JxoS6B_Ammn2ikc2TyGXFzztY'                
     );
 
     // Redirect if already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    client.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         window.location.href = '/protected.html';
       }
@@ -89,7 +89,7 @@
     async function login() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await client.auth.signInWithPassword({ email, password });
       if (error) {
         document.getElementById('auth-error').innerText = error.message;
       } else {
@@ -100,7 +100,7 @@
     async function signup() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await client.auth.signUp({ email, password });
       if (error) {
         document.getElementById('auth-error').innerText = error.message;
       } else {
@@ -109,7 +109,7 @@
     }
 
     async function logout() {
-      await supabase.auth.signOut();
+      await client.auth.signOut();
       alert('Logged out!');
     }
   </script>
