@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Protected Page with User Data</title>
+  <title>Protected User Dashboard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -69,7 +69,7 @@
   <script>
     const client = supabase.createClient(
       'https://dvsprlalovkbvssnhevk.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2c3BybGFsb3ZrYnZzc25oZXZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0MTM5NjEsImV4cCI6MjA1Nzk4OTk2MX0.7RSr1Vix-iufjIF2d_JxoS6B_Ammn2ikc2TyGXFzztY'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2c3BybGFsb3ZrYnZzc25oZXZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0MTM5NjEsImV4cCI6MjA1Nzk4OTk2MX0.7RSr1Vix-iufjIF2d_JxoS6B_Ammn2ikc2TyGXFzztY'                  
     );
 
     let currentUser = null;
@@ -88,7 +88,7 @@
     async function addContent() {
       const contentValue = document.getElementById('contentInput').value;
       if (!contentValue) {
-        alert('Please enter something to save!');
+        alert('Please enter something!');
         return;
       }
 
@@ -127,3 +127,4 @@
   </script>
 </body>
 </html>
+
