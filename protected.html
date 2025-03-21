@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Protected Page</title>
+  <title>Protected Page with User Data</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,9 +21,17 @@
       border-radius: 12px;
       text-align: center;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      width: 400px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
     }
     button {
-      margin-top: 20px;
+      margin-top: 10px;
       padding: 10px 20px;
       border: none;
       border-radius: 6px;
@@ -31,12 +40,28 @@
       font-size: 16px;
       cursor: pointer;
     }
+    ul {
+      text-align: left;
+      margin-top: 20px;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
   <div class="protected-container">
-    <h1>Welcome to the Protected Page!</h1>
+    <h1>Welcome!</h1>
     <p id="user-email">Loading user info...</p>
+
+    <h3>Add new content:</h3>
+    <input type="text" id="contentInput" placeholder="Enter something..." />
+    <button onclick="addContent()">Save Content</button>
+
+    <h3>Your saved content:</h3>
+    <ul id="content-list"></ul>
+
     <button onclick="logout()">Log Out</button>
   </div>
 
@@ -47,21 +72,58 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2c3BybGFsb3ZrYnZzc25oZXZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0MTM5NjEsImV4cCI6MjA1Nzk4OTk2MX0.7RSr1Vix-iufjIF2d_JxoS6B_Ammn2ikc2TyGXFzztY'
     );
 
+    let currentUser = null;
+
     async function checkAuth() {
       const { data: { session } } = await client.auth.getSession();
       if (!session) {
         window.location.href = '/auth.html';
       } else {
-        document.getElementById('user-email').innerText = `You are logged in as: ${session.user.email}`;
+        currentUser = session.user;
+        document.getElementById('user-email').innerText = `Logged in as: ${session.user.email}`;
+        loadUserContent();
       }
     }
 
-    checkAuth();
+    async function addContent() {
+      const contentValue = document.getElementById('contentInput').value;
+      if (!contentValue) {
+        alert('Please enter something to save!');
+        return;
+      }
+
+      const { error } = await client.from('User_data').insert([
+        { User_id: currentUser.id, Content: contentValue }
+      ]);
+      if (error) {
+        alert('Error adding content: ' + error.message);
+      } else {
+        document.getElementById('contentInput').value = '';
+        loadUserContent();
+      }
+    }
+
+    async function loadUserContent() {
+      const { data, error } = await client.from('User_data').select('Content, created_at').order('created_at', { ascending: false });
+      if (error) {
+        console.error(error);
+      } else {
+        const list = document.getElementById('content-list');
+        list.innerHTML = '';
+        data.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.Content} (added on ${new Date(item.created_at).toLocaleDateString()})`;
+          list.appendChild(li);
+        });
+      }
+    }
 
     async function logout() {
       await client.auth.signOut();
       window.location.href = '/auth.html';
     }
+
+    checkAuth();
   </script>
 </body>
 </html>
