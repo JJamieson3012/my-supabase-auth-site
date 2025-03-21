@@ -77,7 +77,8 @@
     async function checkAuth() {
       const { data: { session } } = await client.auth.getSession();
       if (!session) {
-        window.location.href = '/auth.html';
+        window.location.href = 'window.location.href = 'https://jjamieson3012.github.io/my-supabase-auth-site/auth.html';
+';
       } else {
         currentUser = session.user;
         document.getElementById('user-email').innerText = `Logged in as: ${session.user.email}`;
