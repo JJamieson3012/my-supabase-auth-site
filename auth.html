@@ -76,14 +76,13 @@
   <script>
     const client = supabase.createClient(
       'https://dvsprlalovkbvssnhevk.supabase.co', 
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2c3BybGFsb3ZrYnZzc25oZXZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0MTM5NjEsImV4cCI6MjA1Nzk4OTk2MX0.7RSr1Vix-iufjIF2d_JxoS6B_Ammn2ikc2TyGXFzztY'                
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2c3BybGFsb3ZrYnZzc25oZXZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0MTM5NjEsImV4cCI6MjA1Nzk4OTk2MX0.7RSr1Vix-iufjIF2d_JxoS6B_Ammn2ikc2TyGXFzztY'
     );
 
     // Redirect if already logged in
     client.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        window.location.href = 'window.location.href = 'https://jjamieson3012.github.io/my-supabase-auth-site/protected.html';
-';
+        window.location.href = 'https://jjamieson3012.github.io/my-supabase-auth-site/protected.html';
       }
     });
 
@@ -94,25 +93,12 @@
       if (error) {
         document.getElementById('auth-error').innerText = error.message;
       } else {
-        window.location.href = '/protected.html';
+        window.location.href = 'https://jjamieson3012.github.io/my-supabase-auth-site/protected.html';
       }
     }
 
     async function signup() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      const { error } = await client.auth.signUp({ email, password });
-      if (error) {
-        document.getElementById('auth-error').innerText = error.message;
-      } else {
-        alert('Signup successful! Please check your email for confirmation.');
-      }
-    }
+      const { error } = await client.auth.signUp({ e
 
-    async function logout() {
-      await client.auth.signOut();
-      alert('Logged out!');
-    }
-  </script>
-</body>
-</html>
