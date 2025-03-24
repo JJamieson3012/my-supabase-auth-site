@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Footfall Data</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    form { max-width: 300px; margin: auto; }
+    input { width: 100%; margin-bottom: 10px; padding: 8px; }
+    button { padding: 10px; width: 100%; }
+  </style>
+</head>
+<body>
+  <h2>Add Footfall Data</h2>
+  <form id="footfallForm">
+    <label>Latitude:</label>
+    <input type="number" step="any" id="lat" required>
+    <label>Longitude:</label>
+    <input type="number" step="any" id="lng" required>
+    <label>Footfall Count:</label>
+    <input type="number" id="count" required>
+    <button type="submit">Submit</button>
+  </form>
+  <p id="message"></p>
+
+  <script>
+    document.getElementById('footfallForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const lat = parseFloat(document.getElementById('lat').value);
+      const lng = parseFloat(document.getElementById('lng').value);
+      const count = parseInt(document.getElementById('count').value);
+
+      fetch('https://01d977b8-1bde-4e1a-8963-99ee212791de-00-1igrk02va0eag.picard.replit.dev/api/add-footfall', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat, lng, count })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('message').textContent = data.message;
+        document.getElementById('footfallForm').reset();
+      })
+      .catch(err => console.error('Error:', err));
+    });
+  </script>
+</body>
+</html>
