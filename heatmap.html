@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Footfall Heatmap with Filters</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <style>
+    #map { height: 90vh; width: 100%; }
+    .controls { margin: 10px; text-align: center; }
+    .controls input, .controls button { margin: 5px; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Interactive Footfall Heatmap</h2>
+  <div class="controls">
+    <input type="text" id="searchBox" placeholder="Search town or city..." />
+    <button onclick="searchLocation()">Search</button>
+    <br>
+    <button onclick="goToPreset(53.48, -2.24, 'Manchester')">Manchester</button>
+    <button onclick="goToPreset(53.41, -2.98, 'Liverpool')">Liverpool</button>
+    <button onclick="goToPreset(53.79, -2.24, 'Burnley')">Burnley</button>
+    <br>
+    <label>Min footfall: <span id="minCountValue">0</span></label>
+    <input type="range" id="minCountSlider" min="0" max="200" step="10" value="0" onchange="updateHeatmap()" />
+  </div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  <script>
+    const apiUrl = 'https://YOUR-DEPLOYED-URL/api/footfall'; // Replace this when deployed
+    let allPoints = [];
+    let heatmapLayer;
+
+    const map = L.map('map').setView([53.48, -2.24], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+
+    function fetchData() {
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          allPoints = data;
+          updateHeatmap();
+        });
+    }
+
+    function updateHeatmap() {
+      const minCount = parseInt(document.getElementById('minCountSlider').value);
+      document.getElementById('minCountValue').innerText = minCount;
+
+      if (heatmapLayer) {
+        map.removeLayer(heatmapLayer);
+      }
+
+      const heatPoints = allPoints
+        .filter(p => p.count >= minCount)
+        .map(p => [p.lat, p.lng, p.count / 100]);
+
+      heatmapLayer = L.heatLayer(heatPoints, { radius: 25, blur: 15 }).addTo(map);
+    }
+
+    function searchLocation() {
+      const query = document.getElementById('searchBox').value;
+      if (!query) return;
+
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+        .then(response => response.json())
+        .then(locations => {
+          if (locations.length > 0) {
+            const loc = locations[0];
+            map.setView([loc.lat, loc.lon], 12);
+          } else {
+            alert('Location not found');
+          }
+        });
+    }
+
+    function goToPreset(lat, lng, name) {
+      map.setView([lat, lng], 12);
+      document.getElementById('searchBox').value = name;
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>
+
